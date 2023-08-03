@@ -3,11 +3,16 @@ package com.example.Project_2_KimGyuri.controller;
 import com.example.Project_2_KimGyuri.dto.ResponseDto;
 import com.example.Project_2_KimGyuri.entity.user.CustomUserDetails;
 import com.example.Project_2_KimGyuri.jwt.JwtTokenUtils;
+import com.example.Project_2_KimGyuri.jwt.dto.JwtRequestDto;
+import com.example.Project_2_KimGyuri.jwt.dto.JwtTokenDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 @Slf4j
 @RestController
@@ -45,6 +50,18 @@ public class AuthenticationController {
         }
 
         response.setMessage("비밀번호가 일치하지 않습니다.");
+        return response;
+    }
+
+    //로그인
+    @PostMapping("/login")
+    public JwtTokenDto loginJwt(@RequestBody JwtRequestDto dto) {
+        UserDetails userDetails = manager.loadUserByUsername(dto.getUsername());
+        if(!passwordEncoder.matches(dto.getPassword(), userDetails.getPassword()))
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+
+        JwtTokenDto response = new JwtTokenDto();
+        response.setToken(jwtTokenUtils.generateToken(userDetails));
         return response;
     }
 }
