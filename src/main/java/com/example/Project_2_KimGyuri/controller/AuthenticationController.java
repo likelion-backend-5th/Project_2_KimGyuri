@@ -5,13 +5,16 @@ import com.example.Project_2_KimGyuri.entity.user.CustomUserDetails;
 import com.example.Project_2_KimGyuri.jwt.JwtTokenUtils;
 import com.example.Project_2_KimGyuri.jwt.dto.JwtRequestDto;
 import com.example.Project_2_KimGyuri.jwt.dto.JwtTokenDto;
+import com.example.Project_2_KimGyuri.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 @Slf4j
@@ -21,6 +24,7 @@ public class AuthenticationController {
     private final UserDetailsManager manager;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenUtils jwtTokenUtils;
+    private final AuthenticationService service;
 
     //회원가입
     @PostMapping("/signup")
@@ -62,6 +66,15 @@ public class AuthenticationController {
 
         JwtTokenDto response = new JwtTokenDto();
         response.setToken(jwtTokenUtils.generateToken(userDetails));
+        return response;
+    }
+
+    //프로필 사진 업로드
+    @PutMapping(value = "/profileImg", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseDto updateProfile(@RequestParam("profileImg")MultipartFile profileImg) {
+        service.updateImage(profileImg);
+        ResponseDto response = new ResponseDto();
+        response.setMessage("프로필 사진이 업로드 되었습니다.");
         return response;
     }
 }
