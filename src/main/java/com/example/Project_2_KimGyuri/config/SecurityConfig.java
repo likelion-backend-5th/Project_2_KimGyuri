@@ -27,6 +27,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
                         authHttp -> authHttp
+                                .requestMatchers("/profileImg").authenticated() //인증
                                 .requestMatchers("/login", "/signup").anonymous() //비인증
                 )
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
