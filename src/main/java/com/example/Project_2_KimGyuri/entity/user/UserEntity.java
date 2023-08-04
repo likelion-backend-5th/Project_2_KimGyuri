@@ -1,7 +1,10 @@
 package com.example.Project_2_KimGyuri.entity.user;
 
+import com.example.Project_2_KimGyuri.entity.ArticleEntity;
 import jakarta.persistence.*;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 @Entity
@@ -21,4 +24,7 @@ public class UserEntity {
 
     private String email;
     private String phone;
+
+    @OneToMany(mappedBy = "usersId")
+    private List<ArticleEntity> articles;
 }
