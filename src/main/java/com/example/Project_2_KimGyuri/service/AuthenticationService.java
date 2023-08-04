@@ -1,6 +1,5 @@
 package com.example.Project_2_KimGyuri.service;
 
-import com.example.Project_2_KimGyuri.dto.ResponseDto;
 import com.example.Project_2_KimGyuri.entity.user.CustomUserDetails;
 import com.example.Project_2_KimGyuri.entity.user.UserEntity;
 import com.example.Project_2_KimGyuri.jwt.JwtTokenUtils;
@@ -17,8 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.awt.image.ImagingOpException;
-import java.awt.print.Pageable;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
