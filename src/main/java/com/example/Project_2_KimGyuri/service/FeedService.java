@@ -26,6 +26,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -121,5 +122,61 @@ public class FeedService {
         if (optionalArticle.isEmpty())
             throw new ResponseStatusException(HttpStatus.NOT_FOUND); //피드를 찾을 수 없습니다.
         return OneArticleDto.fromEntity(optionalArticle.get());
+    }
+
+    //피드 수정
+    public void updateArticle(Long articleId, String title, String content, MultipartFile[] images, List<Long> deleteImageId) {
+        UserEntity user = getUserFromToken();
+
+        Optional<ArticleEntity> optionalArticle = articleRepository.findById(articleId);
+        if (optionalArticle.isEmpty())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND); //피드를 찾을 수 없습니다
+        ArticleEntity article = optionalArticle.get();
+        if (article.getUsersId().getId().equals(user.getId())) {
+            if (title != null)
+                article.setTitle(title);
+            if (content != null)
+                article.setContent(content);
+            Optional<MultipartFile[]> optionalImages = Optional.ofNullable(images);
+            if (optionalImages.isPresent()) {
+                article.setDraft(true);
+                for (MultipartFile image : images) {
+                    String imageDir = String.format("images/%d/", user.getId());
+                    try {
+                        Files.createDirectories(Path.of(imageDir));
+                    } catch (IOException e) {
+                        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+                    }
+
+                    String originalFilename = image.getOriginalFilename();
+                    UUID uuid = UUID.randomUUID();
+                    String imageFilename = uuid + "_" +originalFilename;
+                    String imagePath = imageDir + imageFilename;
+
+                    try {
+                        image.transferTo(Path.of(imagePath));
+                    } catch (IOException e) {
+                        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+                    }
+                    ArticleImagesEntity newImages = new ArticleImagesEntity();
+                    newImages.setArticleId(article);
+                    newImages.setImageUrl(String.format("/images/%d/%s", user.getId(), imageFilename));
+                    articleImagesRepository.save(newImages);
+                }
+            }
+            if (deleteImageId != null) {
+                for (Long id : deleteImageId) {
+                    articleImagesRepository.deleteById(id);
+                }
+                //이미지를 다 삭제한 경우 draft를 false로 변경
+                List<ArticleImagesEntity> articleImages = articleImagesRepository.findByArticleId_Id(articleId);
+                if (articleImages.isEmpty()) {
+                    article.setDraft(false);
+                    articleRepository.save(article);
+                }
+            }
+            articleRepository.save(article);
+        } else
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED); //권한이 없습니다.
     }
 }

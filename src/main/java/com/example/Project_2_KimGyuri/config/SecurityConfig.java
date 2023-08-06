@@ -30,7 +30,8 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.GET, "/feed/{username}").permitAll() //누구나
                                 .requestMatchers("/profileImg").authenticated() //인증
                                 .requestMatchers(HttpMethod.POST, "/feed/**").authenticated()
-                                .requestMatchers("/feed/read/{articleId}").authenticated()
+                                .requestMatchers("/feed/read/**").authenticated()
+                                .requestMatchers("feed/update/**").authenticated()
                                 .requestMatchers("/login", "/signup").anonymous() //비인증
                 )
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

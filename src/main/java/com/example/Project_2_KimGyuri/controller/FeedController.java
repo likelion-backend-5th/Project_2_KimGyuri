@@ -11,6 +11,8 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -37,5 +39,16 @@ public class FeedController {
     @GetMapping("/read/{articleId}")
     public OneArticleDto readOne(@PathVariable("articleId") Long articleId) {
         return service.readArticleOne(articleId);
+    }
+
+    //피드 수정
+    @PutMapping("/update/{articleId}")
+    public ResponseDto update(@PathVariable("articleId") Long articleId,
+                              @RequestParam(value = "title", required = false) String title, @RequestParam(value = "content", required = false) String content,
+                              @RequestParam(value = "images", required = false)MultipartFile[] images, @RequestParam(value = "deleteImageId", required = false) List<Long> deleteImageId) {
+        service.updateArticle(articleId, title, content, images, deleteImageId);
+        ResponseDto response = new ResponseDto();
+        response.setMessage("피드가 수정되었습니다.");
+        return response;
     }
 }

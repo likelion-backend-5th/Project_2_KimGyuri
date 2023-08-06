@@ -26,6 +26,6 @@ public class ArticleEntity {
     @Column(name = "deleted_at")
     private Date deletedAt;
 
-    @OneToMany(mappedBy = "articleId")
+    @OneToMany(mappedBy = "articleId", cascade = CascadeType.ALL)
     private List<ArticleImagesEntity> articleImages;
 }
