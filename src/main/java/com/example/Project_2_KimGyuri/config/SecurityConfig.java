@@ -28,6 +28,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(
                         authHttp -> authHttp
                                 .requestMatchers("/profileImg").authenticated() //인증
+                                .requestMatchers("/feed/**").authenticated()
                                 .requestMatchers("/login", "/signup").anonymous() //비인증
                 )
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
