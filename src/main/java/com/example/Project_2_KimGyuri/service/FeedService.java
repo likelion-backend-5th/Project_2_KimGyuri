@@ -1,6 +1,7 @@
 package com.example.Project_2_KimGyuri.service;
 
 import com.example.Project_2_KimGyuri.dto.ArticleDto;
+import com.example.Project_2_KimGyuri.dto.UserArticleListDto;
 import com.example.Project_2_KimGyuri.entity.ArticleEntity;
 import com.example.Project_2_KimGyuri.entity.ArticleImagesEntity;
 import com.example.Project_2_KimGyuri.entity.user.UserEntity;
@@ -11,6 +12,10 @@ import com.example.Project_2_KimGyuri.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -77,7 +82,7 @@ public class FeedService {
 
                 String originalFilename = image.getOriginalFilename();
                 UUID uuid = UUID.randomUUID();
-                String imageFilename = uuid + "_" + originalFilename;
+                String imageFilename = uuid + "_" +originalFilename;
                 String imagePath = imageDir + imageFilename;
 
                 try {
@@ -87,10 +92,22 @@ public class FeedService {
                 }
                 ArticleImagesEntity newImages = new ArticleImagesEntity();
                 newImages.setArticleId(newArticle);
-                newImages.setImageUrl(String.format("/static/%d/%s", user.getId(), imageFilename));
+                newImages.setImageUrl(String.format("/images/%d/%s", user.getId(), imageFilename));
                 articleImagesRepository.save(newImages);
             }
         }
         return ArticleDto.fromEntity(articleRepository.save(newArticle));
+    }
+
+    //사용자 피드 조회
+    public Page<UserArticleListDto> readArticleAll(String username, Integer page) {
+        Optional<UserEntity> optionalUser = userRepository.findByUsername(username);
+        if (optionalUser.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND); //사용자를 찾을 수 없습니다.
+        }
+        UserEntity user = optionalUser.get();
+        Pageable pageable = PageRequest.of(page, 20, Sort.by("id"));
+        Page<ArticleEntity> articleEntityPage = articleRepository.findAllByUsersId_Username(user.getUsername(), pageable);
+        return articleEntityPage.map(UserArticleListDto::fromEntity);
     }
 }

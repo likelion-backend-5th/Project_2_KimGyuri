@@ -16,7 +16,7 @@ spring:
     static-path-pattern: /static/**
   web:
     resources:
-      static-locations: file:profile/,classpath:/static
+      static-locations: file:profile/,file:images/,classpath:/static
 
 jwt:
   secret: dfsdfasdasdabdaashdabsdzxhcbahsdbasdjhabfhjasdbfvsdhfvsdbkfcadbdkadnaskvnsdjkfnasdfkjbasdfhb

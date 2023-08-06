@@ -27,8 +27,9 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
                         authHttp -> authHttp
+                                .requestMatchers(HttpMethod.GET, "/feed/{username}").permitAll() //누구나
                                 .requestMatchers("/profileImg").authenticated() //인증
-                                .requestMatchers("/feed/**").authenticated()
+                                .requestMatchers(HttpMethod.POST, "/feed/**").authenticated()
                                 .requestMatchers("/login", "/signup").anonymous() //비인증
                 )
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
