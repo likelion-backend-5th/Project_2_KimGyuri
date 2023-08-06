@@ -70,7 +70,8 @@ public class FeedService {
         newArticle.setUsersId(user);
         newArticle.setDraft(false);
 
-        if (images.length != 0) {
+        Optional<MultipartFile[]> optionalImages = Optional.ofNullable(images);
+        if (optionalImages.isPresent()) {
             newArticle.setDraft(true);
             articleRepository.save(newArticle);
             for (MultipartFile image : images) {

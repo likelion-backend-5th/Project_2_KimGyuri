@@ -13,7 +13,10 @@ public class UserArticleListDto {
         UserArticleListDto dto = new UserArticleListDto();
         dto.setUsername(entity.getUsersId().getUsername());
         dto.setTitle(entity.getTitle());
-        dto.setRepImage(entity.getArticleImages().get(0).getImageUrl());
+        if (entity.getDraft() == false)
+            dto.setRepImage("basic.jpg");
+        else
+            dto.setRepImage(entity.getArticleImages().get(0).getImageUrl());
         return dto;
     }
 }

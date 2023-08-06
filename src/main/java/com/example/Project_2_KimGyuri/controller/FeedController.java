@@ -20,7 +20,7 @@ public class FeedController {
 
     //피드 등록
     @PostMapping("/create")
-    public ResponseDto create(@RequestParam("title") String title, @RequestParam("content") String content, @RequestParam("images")MultipartFile[] images) {
+    public ResponseDto create(@RequestParam("title") String title, @RequestParam("content") String content, @RequestParam(value = "images", required = false)MultipartFile[] images) {
         service.createArticle(title, content, images);
         ResponseDto response = new ResponseDto();
         response.setMessage("피드가 등록되었습니다.");
