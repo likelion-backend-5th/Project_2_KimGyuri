@@ -42,13 +42,22 @@ public class FeedController {
     }
 
     //피드 수정
-    @PutMapping("/update/{articleId}")
+    @PutMapping("/{articleId}")
     public ResponseDto update(@PathVariable("articleId") Long articleId,
                               @RequestParam(value = "title", required = false) String title, @RequestParam(value = "content", required = false) String content,
                               @RequestParam(value = "images", required = false)MultipartFile[] images, @RequestParam(value = "deleteImageId", required = false) List<Long> deleteImageId) {
         service.updateArticle(articleId, title, content, images, deleteImageId);
         ResponseDto response = new ResponseDto();
         response.setMessage("피드가 수정되었습니다.");
+        return response;
+    }
+
+    //피드 삭제
+    @DeleteMapping("/{articleId}")
+    public ResponseDto delete(@PathVariable("articleId") Long articleId) {
+        service.deleteArticle(articleId);
+        ResponseDto response = new ResponseDto();
+        response.setMessage("피드가 삭제되었습니다.");
         return response;
     }
 }

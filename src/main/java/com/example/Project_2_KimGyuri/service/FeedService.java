@@ -26,6 +26,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -110,7 +111,7 @@ public class FeedService {
         }
         UserEntity user = optionalUser.get();
         Pageable pageable = PageRequest.of(page, 20, Sort.by("id"));
-        Page<ArticleEntity> articleEntityPage = articleRepository.findAllByUsersId_Username(user.getUsername(), pageable);
+        Page<ArticleEntity> articleEntityPage = articleRepository.findAllByUsersId_UsernameAndAndDeletedAtIsNull(user.getUsername(), pageable);
         return articleEntityPage.map(UserArticleListDto::fromEntity);
     }
 
@@ -119,7 +120,7 @@ public class FeedService {
         UserEntity user = getUserFromToken();
 
         Optional<ArticleEntity> optionalArticle = articleRepository.findById(articleId);
-        if (optionalArticle.isEmpty())
+        if (optionalArticle.isEmpty() || (optionalArticle.get().getDeletedAt() != null))
             throw new ResponseStatusException(HttpStatus.NOT_FOUND); //피드를 찾을 수 없습니다.
         return OneArticleDto.fromEntity(optionalArticle.get());
     }
@@ -133,6 +134,9 @@ public class FeedService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND); //피드를 찾을 수 없습니다
         ArticleEntity article = optionalArticle.get();
         if (article.getUsersId().getId().equals(user.getId())) {
+            if (article.getDeletedAt() != null) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND); //이미 삭제된 피드
+            }
             if (title != null)
                 article.setTitle(title);
             if (content != null)
@@ -178,5 +182,19 @@ public class FeedService {
             articleRepository.save(article);
         } else
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED); //권한이 없습니다.
+    }
+
+    //피드 삭제
+    public void deleteArticle(Long articleId) {
+        UserEntity user = getUserFromToken();
+
+        Optional<ArticleEntity> optionalArticle = articleRepository.findById(articleId);
+        if (optionalArticle.isEmpty())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND); //피드를 찾을 수 없습니다
+        ArticleEntity article = optionalArticle.get();
+        if (article.getUsersId().getId().equals(user.getId())) {
+            article.setDeletedAt(new Date());
+            articleRepository.save(article);
+        }
     }
 }

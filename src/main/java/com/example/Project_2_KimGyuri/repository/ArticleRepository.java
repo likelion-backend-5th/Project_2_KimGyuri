@@ -6,5 +6,5 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ArticleRepository extends JpaRepository<ArticleEntity, Long> {
-    Page<ArticleEntity> findAllByUsersId_Username(String username, Pageable pageable);
+    Page<ArticleEntity> findAllByUsersId_UsernameAndAndDeletedAtIsNull(String username, Pageable pageable);
 }
