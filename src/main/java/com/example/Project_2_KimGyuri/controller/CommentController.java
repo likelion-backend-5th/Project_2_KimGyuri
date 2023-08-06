@@ -5,6 +5,7 @@ import com.example.Project_2_KimGyuri.dto.ResponseDto;
 import com.example.Project_2_KimGyuri.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -20,6 +21,15 @@ public class CommentController {
         service.createComment(articleId, dto);
         ResponseDto response = new ResponseDto();
         response.setMessage("댓글이 작성되었습니다.");
+        return response;
+    }
+
+    //댓글 수정
+    @PutMapping("/{commentId}")
+    public ResponseDto update(@PathVariable("articleId") Long articleId, @PathVariable("commentId") Long commentId, @RequestBody CommentDto dto) {
+        service.updateComment(articleId, commentId, dto);
+        ResponseDto response = new ResponseDto();
+        response.setMessage("댓글이 수정되었습니다.");
         return response;
     }
 }

@@ -52,7 +52,7 @@ public class CommentService {
         UserEntity user = getUserFromToken();
 
         Optional<ArticleEntity> optionalArticle = articleRepository.findById(articleId);
-        if (optionalArticle.isEmpty())
+        if (optionalArticle.isEmpty() || (optionalArticle.get().getDeletedAt() != null))
             throw new ResponseStatusException(HttpStatus.NOT_FOUND); //피드를 찾을 수 없습니다
 
         CommentEntity newComment = new CommentEntity();
@@ -61,5 +61,31 @@ public class CommentService {
         newComment.setContent(dto.getContent());
         newComment = commentRepository.save(newComment);
         return CommentDto.fromEntity(newComment);
+    }
+
+    //댓글 수정
+    public CommentDto updateComment(Long articleId, Long commentId, CommentDto dto) {
+        UserEntity user = getUserFromToken();
+
+        Optional<CommentEntity> optionalComment = commentRepository.findById(commentId);
+        if (optionalComment.isEmpty())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND); //댓글을 찾을 수 없습니다.
+
+        CommentEntity comment = optionalComment.get();
+
+        Optional<ArticleEntity> optionalArticle = articleRepository.findById(articleId);
+        if (optionalArticle.isEmpty() || (optionalArticle.get().getDeletedAt() != null))
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND); //피드를 찾을 수 없습니다
+
+        if(comment.getUsersId().getId().equals(user.getId())) {
+            if(comment.getDeletedAt() != null) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND); //댓글을 찾을 수 없습니다.
+            }
+            comment.setContent(dto.getContent());
+            commentRepository.save(comment);
+            return CommentDto.fromEntity(comment);
+        } else {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED); //권한이 없습니다.
+        }
     }
 }
