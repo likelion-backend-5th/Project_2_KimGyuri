@@ -5,12 +5,11 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.Date;
-import java.util.List;
 
 @Data
 @Entity
-@Table(name = "article")
-public class ArticleEntity {
+@Table(name = "comment")
+public class CommentEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -19,16 +18,12 @@ public class ArticleEntity {
     @JoinColumn(name = "users_id")
     private UserEntity usersId;
 
-    private String title;
+    @ManyToOne
+    @JoinColumn(name = "article_id")
+    private ArticleEntity article;
+
     private String content;
-    private Boolean draft;
 
     @Column(name = "deleted_at")
     private Date deletedAt;
-
-    @OneToMany(mappedBy = "articleId", cascade = CascadeType.ALL)
-    private List<ArticleImagesEntity> articleImages;
-
-    @OneToMany(mappedBy = "article", cascade = CascadeType.ALL)
-    private List<CommentEntity> comments;
 }

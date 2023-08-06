@@ -1,6 +1,7 @@
 package com.example.Project_2_KimGyuri.entity.user;
 
 import com.example.Project_2_KimGyuri.entity.ArticleEntity;
+import com.example.Project_2_KimGyuri.entity.CommentEntity;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -27,4 +28,7 @@ public class UserEntity {
 
     @OneToMany(mappedBy = "usersId")
     private List<ArticleEntity> articles;
+
+    @OneToMany(mappedBy = "usersId")
+    private List<CommentEntity> comments;
 }
