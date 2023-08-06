@@ -1,11 +1,13 @@
 package com.example.Project_2_KimGyuri.controller;
 
+import com.example.Project_2_KimGyuri.dto.OneArticleDto;
 import com.example.Project_2_KimGyuri.dto.ResponseDto;
 import com.example.Project_2_KimGyuri.dto.UserArticleListDto;
 import com.example.Project_2_KimGyuri.service.FeedService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,5 +31,11 @@ public class FeedController {
     @GetMapping("/{username}")
     public Page<UserArticleListDto> readAll(@PathVariable("username") String username, @RequestParam(value = "page", defaultValue = "0") Integer page) {
         return service.readArticleAll(username, page);
+    }
+
+    //피드 단독 조회
+    @GetMapping("/read/{articleId}")
+    public OneArticleDto readOne(@PathVariable("articleId") Long articleId) {
+        return service.readArticleOne(articleId);
     }
 }

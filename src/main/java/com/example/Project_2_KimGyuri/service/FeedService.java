@@ -1,6 +1,7 @@
 package com.example.Project_2_KimGyuri.service;
 
 import com.example.Project_2_KimGyuri.dto.ArticleDto;
+import com.example.Project_2_KimGyuri.dto.OneArticleDto;
 import com.example.Project_2_KimGyuri.dto.UserArticleListDto;
 import com.example.Project_2_KimGyuri.entity.ArticleEntity;
 import com.example.Project_2_KimGyuri.entity.ArticleImagesEntity;
@@ -109,5 +110,15 @@ public class FeedService {
         Pageable pageable = PageRequest.of(page, 20, Sort.by("id"));
         Page<ArticleEntity> articleEntityPage = articleRepository.findAllByUsersId_Username(user.getUsername(), pageable);
         return articleEntityPage.map(UserArticleListDto::fromEntity);
+    }
+
+    //피드 단독 조회
+    public OneArticleDto readArticleOne(Long articleId) {
+        UserEntity user = getUserFromToken();
+
+        Optional<ArticleEntity> optionalArticle = articleRepository.findById(articleId);
+        if (optionalArticle.isEmpty())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND); //피드를 찾을 수 없습니다.
+        return OneArticleDto.fromEntity(optionalArticle.get());
     }
 }
