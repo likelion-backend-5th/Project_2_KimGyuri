@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Date;
 import java.util.Optional;
 
 @Service
@@ -86,6 +87,29 @@ public class CommentService {
             return CommentDto.fromEntity(comment);
         } else {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED); //권한이 없습니다.
+        }
+    }
+
+    //댓글 삭제
+    public void deleteComment(Long articleId, Long commentId) {
+        UserEntity user = getUserFromToken();
+
+        Optional<CommentEntity> optionalComment = commentRepository.findById(commentId);
+        if (optionalComment.isEmpty())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND); //댓글을 찾을 수 없습니다.
+
+        CommentEntity comment = optionalComment.get();
+
+        Optional<ArticleEntity> optionalArticle = articleRepository.findById(articleId);
+        if (optionalArticle.isEmpty() || (optionalArticle.get().getDeletedAt() != null))
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND); //피드를 찾을 수 없습니다
+
+        if(comment.getUsersId().getId().equals(user.getId())) {
+            if (comment.getDeletedAt() != null) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND); //댓글을 찾을 수 없습니다.
+            }
+            comment.setDeletedAt(new Date());
+            commentRepository.save(comment);
         }
     }
 }

@@ -32,4 +32,13 @@ public class CommentController {
         response.setMessage("댓글이 수정되었습니다.");
         return response;
     }
+
+    //댓글 삭제
+    @DeleteMapping("/{commentId}")
+    public ResponseDto delete(@PathVariable("articleId") Long articleId, @PathVariable("commentId") Long commentId) {
+        service.deleteComment(articleId, commentId);
+        ResponseDto response = new ResponseDto();
+        response.setMessage("댓글이 삭제되었습니다.");
+        return response;
+    }
 }
