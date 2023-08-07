@@ -89,8 +89,8 @@ public class UserService {
         //팔로우
         if (optionalUserFollows.isEmpty()) {
             UserFollowsEntity userFollows = new UserFollowsEntity();
-            userFollows.setFollower(user);
-            userFollows.setFollowing(loginUser);
+            userFollows.setFollowing(user);
+            userFollows.setFollower(loginUser);
             userFollowRepository.save(userFollows);
             return "follow";
         }
