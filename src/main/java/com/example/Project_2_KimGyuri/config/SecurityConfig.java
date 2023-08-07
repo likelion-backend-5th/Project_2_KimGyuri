@@ -33,6 +33,7 @@ public class SecurityConfig {
                                 .requestMatchers("/feed/read/**").authenticated()
                                 .requestMatchers(HttpMethod.PUT, "feed/**").authenticated()
                                 .requestMatchers(HttpMethod.DELETE, "feed/**").authenticated()
+                                .requestMatchers("/user/**").authenticated()
                                 .requestMatchers("/login", "/signup").anonymous() //비인증
                 )
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
