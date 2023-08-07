@@ -3,6 +3,7 @@ package com.example.Project_2_KimGyuri.entity.user;
 import com.example.Project_2_KimGyuri.entity.ArticleEntity;
 import com.example.Project_2_KimGyuri.entity.CommentEntity;
 import com.example.Project_2_KimGyuri.entity.LikeArticleEntity;
+import com.example.Project_2_KimGyuri.entity.UserFollowsEntity;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -35,4 +36,10 @@ public class UserEntity {
 
     @OneToMany(mappedBy = "usersId")
     private List<LikeArticleEntity> likes;
+
+    @OneToMany(mappedBy = "following")
+    private List<UserFollowsEntity> following;
+
+    @OneToMany(mappedBy = "follower")
+    private List<UserFollowsEntity> follower;
 }

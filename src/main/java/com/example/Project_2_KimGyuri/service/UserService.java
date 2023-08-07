@@ -1,8 +1,10 @@
 package com.example.Project_2_KimGyuri.service;
 
 import com.example.Project_2_KimGyuri.dto.UserInfoDto;
+import com.example.Project_2_KimGyuri.entity.UserFollowsEntity;
 import com.example.Project_2_KimGyuri.entity.user.UserEntity;
 import com.example.Project_2_KimGyuri.jwt.JwtTokenUtils;
+import com.example.Project_2_KimGyuri.repository.UserFollowRepository;
 import com.example.Project_2_KimGyuri.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ public class UserService {
     private final HttpServletRequest request;
     private final JwtTokenUtils jwtTokenUtils;
     private final UserRepository userRepository;
+    private final UserFollowRepository userFollowRepository;
 
     //인증된 사용자 정보 추출
     private UserEntity getUserFromToken() {
@@ -58,5 +61,34 @@ public class UserService {
         else
             dto.setProfile(userInfo.getProfileImg());
         return dto;
+    }
+
+    //팔로우/팔로우해제
+    public String followUser(String username) {
+        UserEntity loginUser = getUserFromToken();
+
+        Optional<UserEntity> optionalUser = userRepository.findByUsername(username);
+        if (optionalUser.isEmpty())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND); //사용자를 찾을 수 없습니다.
+
+        UserEntity user = optionalUser.get();
+        if (loginUser.getId().equals(user.getId()))
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED); //본인 팔로우 불가. 권한이 없습니다.
+
+        Optional<UserFollowsEntity> optionalUserFollows = userFollowRepository.findByFollower_Id(user.getId());
+        //팔로우
+        if (optionalUserFollows.isEmpty()) {
+            UserFollowsEntity userFollows = new UserFollowsEntity();
+            userFollows.setFollower(user);
+            userFollows.setFollowing(loginUser);
+            userFollowRepository.save(userFollows);
+            return "follow";
+        }
+        //팔로우 해제
+        else {
+            UserFollowsEntity userFollows = optionalUserFollows.get();
+            userFollowRepository.deleteById(userFollows.getId());
+            return "cancel";
+        }
     }
 }
