@@ -2,13 +2,17 @@ package com.example.Project_2_KimGyuri.service;
 
 import com.example.Project_2_KimGyuri.dto.ArticleDto;
 import com.example.Project_2_KimGyuri.dto.OneArticleDto;
+import com.example.Project_2_KimGyuri.dto.RequestFriendDto;
 import com.example.Project_2_KimGyuri.dto.UserArticleListDto;
 import com.example.Project_2_KimGyuri.entity.ArticleEntity;
 import com.example.Project_2_KimGyuri.entity.ArticleImagesEntity;
+import com.example.Project_2_KimGyuri.entity.UserFollowsEntity;
+import com.example.Project_2_KimGyuri.entity.UserFriendsEntity;
 import com.example.Project_2_KimGyuri.entity.user.UserEntity;
 import com.example.Project_2_KimGyuri.jwt.JwtTokenUtils;
 import com.example.Project_2_KimGyuri.repository.ArticleImagesRepository;
 import com.example.Project_2_KimGyuri.repository.ArticleRepository;
+import com.example.Project_2_KimGyuri.repository.UserFollowRepository;
 import com.example.Project_2_KimGyuri.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -26,10 +30,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -40,6 +41,7 @@ public class FeedService {
     private final HttpServletRequest request;
     private final JwtTokenUtils jwtTokenUtils;
     private final UserRepository userRepository;
+    private final UserFollowRepository userFollowRepository;
 
     //인증된 사용자 정보 추출
     private UserEntity getUserFromToken() {
@@ -111,7 +113,7 @@ public class FeedService {
         }
         UserEntity user = optionalUser.get();
         Pageable pageable = PageRequest.of(page, 20, Sort.by("id"));
-        Page<ArticleEntity> articleEntityPage = articleRepository.findAllByUsersId_UsernameAndAndDeletedAtIsNull(user.getUsername(), pageable);
+        Page<ArticleEntity> articleEntityPage = articleRepository.findAllByUsersId_UsernameAndDeletedAtIsNull(user.getUsername(), pageable);
         return articleEntityPage.map(UserArticleListDto::fromEntity);
     }
 
@@ -196,5 +198,20 @@ public class FeedService {
             article.setDeletedAt(new Date());
             articleRepository.save(article);
         }
+    }
+
+    //팔로잉 피드 조회
+    public Page<UserArticleListDto> readArticleAllFollowing(Integer page) {
+        UserEntity loginUser = getUserFromToken();
+
+        List<UserFollowsEntity> userFollowsEntities = userFollowRepository.findAllByFollower(loginUser);
+        List<UserEntity> following = new ArrayList<>();
+        for (UserFollowsEntity userFollowsEntity : userFollowsEntities) {
+            UserEntity follow = userFollowsEntity.getFollowing();
+            following.add(follow);
+        }
+        Pageable pageable = PageRequest.of(page, 20, Sort.by("id").descending());
+        Page<ArticleEntity> articleEntityPage = articleRepository.findAllByUsersIdInAndDeletedAtIsNull(following, pageable);
+        return articleEntityPage.map(UserArticleListDto::fromEntity);
     }
 }

@@ -3,15 +3,23 @@ package com.example.Project_2_KimGyuri.controller;
 import com.example.Project_2_KimGyuri.dto.OneArticleDto;
 import com.example.Project_2_KimGyuri.dto.ResponseDto;
 import com.example.Project_2_KimGyuri.dto.UserArticleListDto;
+import com.example.Project_2_KimGyuri.entity.ArticleEntity;
+import com.example.Project_2_KimGyuri.entity.user.UserEntity;
 import com.example.Project_2_KimGyuri.service.FeedService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -59,5 +67,11 @@ public class FeedController {
         ResponseDto response = new ResponseDto();
         response.setMessage("피드가 삭제되었습니다.");
         return response;
+    }
+
+    //팔로잉 피드 조회
+    @GetMapping("/following")
+    public Page<UserArticleListDto> readAllFollowing(@RequestParam(value = "page", defaultValue = "0") Integer page) {
+        return service.readArticleAllFollowing(page);
     }
 }
