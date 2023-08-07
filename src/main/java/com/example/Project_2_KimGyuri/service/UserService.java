@@ -85,7 +85,7 @@ public class UserService {
         if (loginUser.getId().equals(user.getId()))
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED); //본인 팔로우 불가. 권한이 없습니다.
 
-        Optional<UserFollowsEntity> optionalUserFollows = userFollowRepository.findByFollower_Id(user.getId());
+        Optional<UserFollowsEntity> optionalUserFollows = userFollowRepository.findByFollowerAndFollowing(loginUser, user);
         //팔로우
         if (optionalUserFollows.isEmpty()) {
             UserFollowsEntity userFollows = new UserFollowsEntity();

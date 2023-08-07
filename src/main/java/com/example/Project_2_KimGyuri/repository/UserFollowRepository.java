@@ -8,6 +8,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserFollowRepository extends JpaRepository<UserFollowsEntity, Long> {
-    Optional<UserFollowsEntity> findByFollower_Id(Long userId);
+    Optional<UserFollowsEntity> findByFollowerAndFollowing(UserEntity follower, UserEntity following);
     List<UserFollowsEntity> findAllByFollower(UserEntity user);
 }
