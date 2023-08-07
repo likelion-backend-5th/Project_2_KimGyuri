@@ -10,10 +10,7 @@ import com.example.Project_2_KimGyuri.entity.UserFollowsEntity;
 import com.example.Project_2_KimGyuri.entity.UserFriendsEntity;
 import com.example.Project_2_KimGyuri.entity.user.UserEntity;
 import com.example.Project_2_KimGyuri.jwt.JwtTokenUtils;
-import com.example.Project_2_KimGyuri.repository.ArticleImagesRepository;
-import com.example.Project_2_KimGyuri.repository.ArticleRepository;
-import com.example.Project_2_KimGyuri.repository.UserFollowRepository;
-import com.example.Project_2_KimGyuri.repository.UserRepository;
+import com.example.Project_2_KimGyuri.repository.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,6 +39,7 @@ public class FeedService {
     private final JwtTokenUtils jwtTokenUtils;
     private final UserRepository userRepository;
     private final UserFollowRepository userFollowRepository;
+    private final UserFriendsRepository userFriendsRepository;
 
     //인증된 사용자 정보 추출
     private UserEntity getUserFromToken() {
@@ -212,6 +210,21 @@ public class FeedService {
         }
         Pageable pageable = PageRequest.of(page, 20, Sort.by("id").descending());
         Page<ArticleEntity> articleEntityPage = articleRepository.findAllByUsersIdInAndDeletedAtIsNull(following, pageable);
+        return articleEntityPage.map(UserArticleListDto::fromEntity);
+    }
+
+    //친구 피드 조회
+    public Page<UserArticleListDto> readArticleAllFriends(Integer page) {
+        UserEntity loginUser = getUserFromToken();
+
+        List<UserFriendsEntity> userFriendsEntities = userFriendsRepository.findAllByToUserIsAndAcceptedEquals(loginUser, true);
+        List<UserEntity> friends = new ArrayList<>();
+        for (UserFriendsEntity userFriendsEntity : userFriendsEntities) {
+            UserEntity friend = userFriendsEntity.getFromUser();
+            friends.add(friend);
+        }
+        Pageable pageable = PageRequest.of(page, 20, Sort.by("id").descending());
+        Page<ArticleEntity> articleEntityPage = articleRepository.findAllByUsersIdInAndDeletedAtIsNull(friends, pageable);
         return articleEntityPage.map(UserArticleListDto::fromEntity);
     }
 }

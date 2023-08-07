@@ -74,4 +74,10 @@ public class FeedController {
     public Page<UserArticleListDto> readAllFollowing(@RequestParam(value = "page", defaultValue = "0") Integer page) {
         return service.readArticleAllFollowing(page);
     }
+
+    //친구 피드 조회
+    @GetMapping("/friends")
+    public Page<UserArticleListDto> readAllFriends(@RequestParam(value = "page", defaultValue = "0") Integer page) {
+        return service.readArticleAllFriends(page);
+    }
 }
