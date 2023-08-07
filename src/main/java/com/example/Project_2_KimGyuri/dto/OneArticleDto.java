@@ -14,6 +14,7 @@ public class OneArticleDto {
     private String title;
     private String content;
     private List<String> imageUrls;
+    private Integer likeCount;
     private List<CommentDto> comments;
 
     public static OneArticleDto fromEntity(ArticleEntity entity) {
@@ -27,6 +28,8 @@ public class OneArticleDto {
             imageUrls.add(image.getImageUrl());
         }
         dto.setImageUrls(imageUrls);
+
+        dto.setLikeCount(entity.getLikes().size());
 
         List<CommentDto> comments = new ArrayList<>();
         for (CommentEntity comment : entity.getComments()) {
