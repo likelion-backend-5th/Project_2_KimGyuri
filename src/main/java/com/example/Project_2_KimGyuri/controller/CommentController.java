@@ -5,7 +5,6 @@ import com.example.Project_2_KimGyuri.dto.ResponseDto;
 import com.example.Project_2_KimGyuri.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j

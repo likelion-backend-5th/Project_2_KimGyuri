@@ -1,7 +1,6 @@
 package com.example.Project_2_KimGyuri.dto;
 
 import com.example.Project_2_KimGyuri.entity.UserFriendsEntity;
-import com.example.Project_2_KimGyuri.entity.user.UserEntity;
 import lombok.Data;
 
 @Data

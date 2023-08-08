@@ -1,7 +1,6 @@
 package com.example.Project_2_KimGyuri.service;
 
 import com.example.Project_2_KimGyuri.dto.AcceptedDto;
-import com.example.Project_2_KimGyuri.dto.CommentDto;
 import com.example.Project_2_KimGyuri.dto.RequestFriendDto;
 import com.example.Project_2_KimGyuri.dto.UserInfoDto;
 import com.example.Project_2_KimGyuri.entity.UserFollowsEntity;

@@ -1,7 +1,6 @@
 package com.example.Project_2_KimGyuri.repository;
 
 import com.example.Project_2_KimGyuri.entity.ArticleEntity;
-import com.example.Project_2_KimGyuri.entity.UserFollowsEntity;
 import com.example.Project_2_KimGyuri.entity.user.UserEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

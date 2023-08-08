@@ -3,9 +3,6 @@ package com.example.Project_2_KimGyuri.dto;
 import com.example.Project_2_KimGyuri.entity.ArticleEntity;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @Data
 public class ArticleDto {

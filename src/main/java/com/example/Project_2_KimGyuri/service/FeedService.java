@@ -2,7 +2,6 @@ package com.example.Project_2_KimGyuri.service;
 
 import com.example.Project_2_KimGyuri.dto.ArticleDto;
 import com.example.Project_2_KimGyuri.dto.OneArticleDto;
-import com.example.Project_2_KimGyuri.dto.RequestFriendDto;
 import com.example.Project_2_KimGyuri.dto.UserArticleListDto;
 import com.example.Project_2_KimGyuri.entity.ArticleEntity;
 import com.example.Project_2_KimGyuri.entity.ArticleImagesEntity;
