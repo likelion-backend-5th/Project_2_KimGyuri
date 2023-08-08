@@ -8,10 +8,7 @@ import com.example.Project_2_KimGyuri.entity.ArticleImagesEntity;
 import com.example.Project_2_KimGyuri.entity.UserFollowsEntity;
 import com.example.Project_2_KimGyuri.entity.UserFriendsEntity;
 import com.example.Project_2_KimGyuri.entity.user.UserEntity;
-import com.example.Project_2_KimGyuri.exceptions.ArticleNotFoundException;
-import com.example.Project_2_KimGyuri.exceptions.AuthorizationException;
-import com.example.Project_2_KimGyuri.exceptions.ImageUploadException;
-import com.example.Project_2_KimGyuri.exceptions.UserNotFoundException;
+import com.example.Project_2_KimGyuri.exceptions.*;
 import com.example.Project_2_KimGyuri.jwt.JwtTokenUtils;
 import com.example.Project_2_KimGyuri.repository.*;
 import jakarta.servlet.http.HttpServletRequest;
@@ -70,6 +67,8 @@ public class FeedService {
         UserEntity user = getUserFromToken();
 
         ArticleEntity newArticle = new ArticleEntity();
+        if (title.isBlank() || content.isBlank())
+            throw new ArticleCreateException();
         newArticle.setTitle(title);
         newArticle.setContent(content);
         newArticle.setUsersId(user);
