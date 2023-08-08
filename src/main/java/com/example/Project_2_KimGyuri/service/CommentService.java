@@ -4,6 +4,10 @@ import com.example.Project_2_KimGyuri.dto.CommentDto;
 import com.example.Project_2_KimGyuri.entity.ArticleEntity;
 import com.example.Project_2_KimGyuri.entity.CommentEntity;
 import com.example.Project_2_KimGyuri.entity.user.UserEntity;
+import com.example.Project_2_KimGyuri.exceptions.ArticleNotFoundException;
+import com.example.Project_2_KimGyuri.exceptions.AuthorizationException;
+import com.example.Project_2_KimGyuri.exceptions.CommentNotFoundException;
+import com.example.Project_2_KimGyuri.exceptions.UserNotFoundException;
 import com.example.Project_2_KimGyuri.jwt.JwtTokenUtils;
 import com.example.Project_2_KimGyuri.repository.ArticleRepository;
 import com.example.Project_2_KimGyuri.repository.CommentRepository;
@@ -38,7 +42,7 @@ public class CommentService {
                 if (optionalUser.isPresent()) {
                     return optionalUser.get();
                 } else {
-                    throw new ResponseStatusException(HttpStatus.NOT_FOUND); //사용자를 찾을 수 없습니다.
+                    throw new UserNotFoundException();
                 }
             } else {
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED); //유효하지 않은 토큰입니다
@@ -54,7 +58,7 @@ public class CommentService {
 
         Optional<ArticleEntity> optionalArticle = articleRepository.findById(articleId);
         if (optionalArticle.isEmpty() || (optionalArticle.get().getDeletedAt() != null))
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND); //피드를 찾을 수 없습니다
+            throw new ArticleNotFoundException();
 
         CommentEntity newComment = new CommentEntity();
         newComment.setUsersId(user);
@@ -70,23 +74,23 @@ public class CommentService {
 
         Optional<CommentEntity> optionalComment = commentRepository.findById(commentId);
         if (optionalComment.isEmpty())
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND); //댓글을 찾을 수 없습니다.
+            throw new CommentNotFoundException();
 
         CommentEntity comment = optionalComment.get();
 
         Optional<ArticleEntity> optionalArticle = articleRepository.findById(articleId);
         if (optionalArticle.isEmpty() || (optionalArticle.get().getDeletedAt() != null))
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND); //피드를 찾을 수 없습니다
+            throw new ArticleNotFoundException();
 
         if(comment.getUsersId().getId().equals(user.getId())) {
             if(comment.getDeletedAt() != null) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND); //댓글을 찾을 수 없습니다.
+                throw new CommentNotFoundException();
             }
             comment.setContent(dto.getContent());
             commentRepository.save(comment);
             return CommentDto.fromEntity(comment);
         } else {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED); //권한이 없습니다.
+            throw new AuthorizationException();
         }
     }
 
@@ -96,17 +100,17 @@ public class CommentService {
 
         Optional<CommentEntity> optionalComment = commentRepository.findById(commentId);
         if (optionalComment.isEmpty())
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND); //댓글을 찾을 수 없습니다.
+            throw new CommentNotFoundException();
 
         CommentEntity comment = optionalComment.get();
 
         Optional<ArticleEntity> optionalArticle = articleRepository.findById(articleId);
         if (optionalArticle.isEmpty() || (optionalArticle.get().getDeletedAt() != null))
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND); //피드를 찾을 수 없습니다
+            throw new ArticleNotFoundException();
 
         if(comment.getUsersId().getId().equals(user.getId())) {
             if (comment.getDeletedAt() != null) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND); //댓글을 찾을 수 없습니다.
+                throw new CommentNotFoundException();
             }
             comment.setDeletedAt(new Date());
             commentRepository.save(comment);

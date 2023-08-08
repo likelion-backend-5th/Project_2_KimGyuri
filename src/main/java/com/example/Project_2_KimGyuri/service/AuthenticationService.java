@@ -2,6 +2,8 @@ package com.example.Project_2_KimGyuri.service;
 
 import com.example.Project_2_KimGyuri.entity.user.CustomUserDetails;
 import com.example.Project_2_KimGyuri.entity.user.UserEntity;
+import com.example.Project_2_KimGyuri.exceptions.ImageUploadException;
+import com.example.Project_2_KimGyuri.exceptions.UserNotFoundException;
 import com.example.Project_2_KimGyuri.jwt.JwtTokenUtils;
 import com.example.Project_2_KimGyuri.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -88,7 +90,7 @@ public class AuthenticationService implements UserDetailsManager {
                     try {
                         Files.createDirectories(Path.of(profileDir));
                     } catch (IOException e) {
-                        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR); //폴더 생성 오류
+                        throw new ImageUploadException();
                     }
 
                     String originalFilename = image.getOriginalFilename();
@@ -101,12 +103,12 @@ public class AuthenticationService implements UserDetailsManager {
                     try {
                         image.transferTo(Path.of(profilePath));
                     } catch (IOException e) {
-                        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR); //이미지 업로드 오류
+                        throw new ImageUploadException();
                     }
                     user.setProfileImg(String.format("/static/%d/%s", user.getId(), profileFilename));
                     userRepository.save(user);
                 } else {
-                    throw new ResponseStatusException(HttpStatus.NOT_FOUND); //사용자를 찾을 수 없습니다
+                    throw new UserNotFoundException();
                 }
             } else {
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED); //유효하지 않은 토큰입니다

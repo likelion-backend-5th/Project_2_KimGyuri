@@ -7,6 +7,9 @@ import com.example.Project_2_KimGyuri.dto.UserInfoDto;
 import com.example.Project_2_KimGyuri.entity.UserFollowsEntity;
 import com.example.Project_2_KimGyuri.entity.UserFriendsEntity;
 import com.example.Project_2_KimGyuri.entity.user.UserEntity;
+import com.example.Project_2_KimGyuri.exceptions.AuthorizationException;
+import com.example.Project_2_KimGyuri.exceptions.RequestFriendException;
+import com.example.Project_2_KimGyuri.exceptions.UserNotFoundException;
 import com.example.Project_2_KimGyuri.jwt.JwtTokenUtils;
 import com.example.Project_2_KimGyuri.repository.UserFollowRepository;
 import com.example.Project_2_KimGyuri.repository.UserFriendsRepository;
@@ -44,7 +47,7 @@ public class UserService {
                 if (optionalUser.isPresent()) {
                     return optionalUser.get();
                 } else {
-                    throw new ResponseStatusException(HttpStatus.NOT_FOUND); //사용자를 찾을 수 없습니다.
+                    throw new UserNotFoundException();
                 }
             } else {
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED); //유효하지 않은 토큰입니다
@@ -60,7 +63,7 @@ public class UserService {
 
         Optional<UserEntity> optionalUser = userRepository.findByUsername(username);
         if (optionalUser.isEmpty())
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND); //사용자를 찾을 수 없습니다.
+            throw new UserNotFoundException();
 
         UserEntity userInfo = optionalUser.get();
         UserInfoDto dto = new UserInfoDto();
@@ -79,11 +82,11 @@ public class UserService {
 
         Optional<UserEntity> optionalUser = userRepository.findByUsername(username);
         if (optionalUser.isEmpty())
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND); //사용자를 찾을 수 없습니다.
+            throw new UserNotFoundException();
 
         UserEntity user = optionalUser.get();
         if (loginUser.getId().equals(user.getId()))
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED); //본인 팔로우 불가. 권한이 없습니다.
+            throw new AuthorizationException();
 
         Optional<UserFollowsEntity> optionalUserFollows = userFollowRepository.findByFollowerAndFollowing(loginUser, user);
         //팔로우
@@ -107,11 +110,11 @@ public class UserService {
         UserEntity loginUser = getUserFromToken();
 
         if (loginUser.getUsername().equals(username))
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED); //본인한테 친구 요청 불가. 권한이 없습니다.
+            throw new AuthorizationException();
 
         Optional<UserEntity> optionalUser = userRepository.findByUsername(username);
         if (optionalUser.isEmpty())
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND); //사용자를 찾을 수 없습니다.
+            throw new UserNotFoundException();
 
         Optional<UserFriendsEntity> optionalUserFriends = userFriendsRepository.findByToUserIsAndFromUserIs(optionalUser.get(), loginUser);
         if (optionalUserFriends.isPresent()) {
@@ -132,11 +135,11 @@ public class UserService {
 
         Optional<UserEntity> optionalUser = userRepository.findByUsername(username);
         if (optionalUser.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND); //사용자를 찾을 수 없습니다.
+            throw new UserNotFoundException();
         }
 
         if (!loginUser.getId().equals(optionalUser.get().getId()))
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED); //본인 친구 요청 목록이 아니라면 조회 불가
+            throw new AuthorizationException();
 
         List<UserFriendsEntity> requests = userFriendsRepository.findAllByToUserIsAndAcceptedEquals(loginUser, false);
 
@@ -156,24 +159,24 @@ public class UserService {
         Optional<UserEntity> optionalUser = userRepository.findByUsername(username); //친구 요청 받은 사용자
         Optional<UserEntity> optionalFromUser = userRepository.findByUsername(fromUser); //친구 요청 보낸 사용자
         if (optionalUser.isEmpty() || optionalFromUser.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND); //사용자를 찾을 수 없습니다.
+            throw new UserNotFoundException();
         }
 
         if (!optionalUser.get().getId().equals(loginUser.getId())) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED); //권한이 없습니다.
+            throw new AuthorizationException();
         }
 
         Optional<UserFriendsEntity> optionalUserFriends = userFriendsRepository.findByToUserIsAndAcceptedEquals(optionalUser.get(), false);
         Optional<UserFriendsEntity> optionalRequestFriends = userFriendsRepository.findByToUserIsAndFromUserIs(optionalUser.get(), optionalFromUser.get());
         if (optionalUserFriends.isEmpty() || optionalRequestFriends.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND); //친구 요청을 찾을 수 없습니다.
+            throw new RequestFriendException();
         }
 
         //수락
         if (dto.isAccepted()) {
             Optional<UserFriendsEntity> toUser = userFriendsRepository.findByToUserIsAndAcceptedEquals(loginUser, false);
             if (toUser.isEmpty()) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND); //이미 처리된 요청입니다.
+                throw new RequestFriendException();
             }
             toUser.get().setAccepted(true);
             UserFriendsEntity friend = new UserFriendsEntity();
@@ -187,7 +190,7 @@ public class UserService {
         else {
             Optional<UserFriendsEntity> toUser = userFriendsRepository.findByToUserIsAndAcceptedEquals(loginUser, false);
             if (toUser.isEmpty())
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND); //이미 처리된 요청입니다.
+                throw new RequestFriendException();
             userFriendsRepository.deleteById(toUser.get().getId());
             return "reject";
         }

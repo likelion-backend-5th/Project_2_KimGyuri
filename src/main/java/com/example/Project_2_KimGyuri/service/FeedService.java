@@ -9,6 +9,10 @@ import com.example.Project_2_KimGyuri.entity.ArticleImagesEntity;
 import com.example.Project_2_KimGyuri.entity.UserFollowsEntity;
 import com.example.Project_2_KimGyuri.entity.UserFriendsEntity;
 import com.example.Project_2_KimGyuri.entity.user.UserEntity;
+import com.example.Project_2_KimGyuri.exceptions.ArticleNotFoundException;
+import com.example.Project_2_KimGyuri.exceptions.AuthorizationException;
+import com.example.Project_2_KimGyuri.exceptions.ImageUploadException;
+import com.example.Project_2_KimGyuri.exceptions.UserNotFoundException;
 import com.example.Project_2_KimGyuri.jwt.JwtTokenUtils;
 import com.example.Project_2_KimGyuri.repository.*;
 import jakarta.servlet.http.HttpServletRequest;
@@ -52,7 +56,7 @@ public class FeedService {
                 if (optionalUser.isPresent()) {
                     return optionalUser.get();
                 } else {
-                    throw new ResponseStatusException(HttpStatus.NOT_FOUND); //사용자를 찾을 수 없습니다.
+                    throw new UserNotFoundException();
                 }
             } else {
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED); //유효하지 않은 토큰입니다
@@ -81,7 +85,7 @@ public class FeedService {
                 try {
                     Files.createDirectories(Path.of(imageDir));
                 } catch (IOException e) {
-                    throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+                    throw new ImageUploadException();
                 }
 
                 String originalFilename = image.getOriginalFilename();
@@ -92,7 +96,7 @@ public class FeedService {
                 try {
                     image.transferTo(Path.of(imagePath));
                 } catch (IOException e) {
-                    throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+                    throw new ImageUploadException();
                 }
                 ArticleImagesEntity newImages = new ArticleImagesEntity();
                 newImages.setArticleId(newArticle);
@@ -107,7 +111,7 @@ public class FeedService {
     public Page<UserArticleListDto> readArticleAll(String username, Integer page) {
         Optional<UserEntity> optionalUser = userRepository.findByUsername(username);
         if (optionalUser.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND); //사용자를 찾을 수 없습니다.
+            throw new UserNotFoundException();
         }
         UserEntity user = optionalUser.get();
         Pageable pageable = PageRequest.of(page, 20, Sort.by("id"));
@@ -121,7 +125,7 @@ public class FeedService {
 
         Optional<ArticleEntity> optionalArticle = articleRepository.findById(articleId);
         if (optionalArticle.isEmpty() || (optionalArticle.get().getDeletedAt() != null))
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND); //피드를 찾을 수 없습니다.
+            throw new ArticleNotFoundException();
         return OneArticleDto.fromEntity(optionalArticle.get());
     }
 
@@ -131,11 +135,11 @@ public class FeedService {
 
         Optional<ArticleEntity> optionalArticle = articleRepository.findById(articleId);
         if (optionalArticle.isEmpty())
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND); //피드를 찾을 수 없습니다
+            throw new ArticleNotFoundException();
         ArticleEntity article = optionalArticle.get();
         if (article.getUsersId().getId().equals(user.getId())) {
             if (article.getDeletedAt() != null) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND); //이미 삭제된 피드
+                throw new ArticleNotFoundException();
             }
             if (title != null)
                 article.setTitle(title);
@@ -149,7 +153,7 @@ public class FeedService {
                     try {
                         Files.createDirectories(Path.of(imageDir));
                     } catch (IOException e) {
-                        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+                        throw new ImageUploadException();
                     }
 
                     String originalFilename = image.getOriginalFilename();
@@ -160,7 +164,7 @@ public class FeedService {
                     try {
                         image.transferTo(Path.of(imagePath));
                     } catch (IOException e) {
-                        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+                        throw new ImageUploadException();
                     }
                     ArticleImagesEntity newImages = new ArticleImagesEntity();
                     newImages.setArticleId(article);
@@ -181,7 +185,7 @@ public class FeedService {
             }
             articleRepository.save(article);
         } else
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED); //권한이 없습니다.
+            throw new AuthorizationException();
     }
 
     //피드 삭제
@@ -190,7 +194,7 @@ public class FeedService {
 
         Optional<ArticleEntity> optionalArticle = articleRepository.findById(articleId);
         if (optionalArticle.isEmpty())
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND); //피드를 찾을 수 없습니다
+            throw new ArticleNotFoundException();
         ArticleEntity article = optionalArticle.get();
         if (article.getUsersId().getId().equals(user.getId())) {
             article.setDeletedAt(new Date());

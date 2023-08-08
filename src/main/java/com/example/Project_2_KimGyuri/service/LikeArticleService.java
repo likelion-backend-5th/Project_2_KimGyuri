@@ -3,6 +3,9 @@ package com.example.Project_2_KimGyuri.service;
 import com.example.Project_2_KimGyuri.entity.ArticleEntity;
 import com.example.Project_2_KimGyuri.entity.LikeArticleEntity;
 import com.example.Project_2_KimGyuri.entity.user.UserEntity;
+import com.example.Project_2_KimGyuri.exceptions.ArticleNotFoundException;
+import com.example.Project_2_KimGyuri.exceptions.AuthorizationException;
+import com.example.Project_2_KimGyuri.exceptions.UserNotFoundException;
 import com.example.Project_2_KimGyuri.jwt.JwtTokenUtils;
 import com.example.Project_2_KimGyuri.repository.ArticleRepository;
 import com.example.Project_2_KimGyuri.repository.LikeArticleRepository;
@@ -38,7 +41,7 @@ public class LikeArticleService {
                 if (optionalUser.isPresent()) {
                     return optionalUser.get();
                 } else {
-                    throw new ResponseStatusException(HttpStatus.NOT_FOUND); //사용자를 찾을 수 없습니다.
+                    throw new UserNotFoundException();
                 }
             } else {
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED); //유효하지 않은 토큰입니다
@@ -54,11 +57,11 @@ public class LikeArticleService {
 
         Optional<ArticleEntity> optionalArticle = articleRepository.findById(articleId);
         if (optionalArticle.isEmpty() || (optionalArticle.get().getDeletedAt() != null))
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND); //피드를 찾을 수 없습니다
+            throw new ArticleNotFoundException();
 
         ArticleEntity article = optionalArticle.get();
         if (user.getId().equals(article.getUsersId().getId())) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED); //본인 게시글 좋아요 불가. 권한이 없습니다.
+            throw new AuthorizationException();
         }
 
         Optional<LikeArticleEntity> optionalLikeArticle = likeArticleRepository.findByArticle_IdAndUsersId_Id(articleId, user.getId());
