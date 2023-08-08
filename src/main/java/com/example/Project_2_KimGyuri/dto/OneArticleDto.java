@@ -34,9 +34,11 @@ public class OneArticleDto {
         List<CommentDto> comments = new ArrayList<>();
         for (CommentEntity comment : entity.getComments()) {
             CommentDto commentDto = new CommentDto();
-            commentDto.setUsername(comment.getUsersId().getUsername());
-            commentDto.setContent(comment.getContent());
-            comments.add(commentDto);
+            if (comment.getDeletedAt() == null) {
+                commentDto.setUsername(comment.getUsersId().getUsername());
+                commentDto.setContent(comment.getContent());
+                comments.add(commentDto);
+            }
         }
         dto.setComments(comments);
 
