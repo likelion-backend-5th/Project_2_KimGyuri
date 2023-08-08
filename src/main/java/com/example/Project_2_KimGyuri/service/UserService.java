@@ -165,15 +165,14 @@ public class UserService {
             throw new AuthorizationException();
         }
 
-        Optional<UserFriendsEntity> optionalUserFriends = userFriendsRepository.findByToUserIsAndAcceptedEquals(optionalUser.get(), false);
-        Optional<UserFriendsEntity> optionalRequestFriends = userFriendsRepository.findByToUserIsAndFromUserIs(optionalUser.get(), optionalFromUser.get());
-        if (optionalUserFriends.isEmpty() || optionalRequestFriends.isEmpty()) {
+        Optional<UserFriendsEntity> optionalUserFriends = userFriendsRepository.findByToUserIsAndFromUserIsAndAcceptedEquals(loginUser, optionalFromUser.get(), false);
+        if (optionalUserFriends.isEmpty()) {
             throw new RequestFriendException();
         }
 
         //수락
         if (dto.isAccepted()) {
-            Optional<UserFriendsEntity> toUser = userFriendsRepository.findByToUserIsAndAcceptedEquals(loginUser, false);
+            Optional<UserFriendsEntity> toUser = userFriendsRepository.findByToUserIsAndFromUserIsAndAcceptedEquals(loginUser, optionalFromUser.get(), false);
             if (toUser.isEmpty()) {
                 throw new RequestFriendException();
             }
@@ -187,7 +186,7 @@ public class UserService {
         }
         //거절
         else {
-            Optional<UserFriendsEntity> toUser = userFriendsRepository.findByToUserIsAndAcceptedEquals(loginUser, false);
+            Optional<UserFriendsEntity> toUser = userFriendsRepository.findByToUserIsAndFromUserIsAndAcceptedEquals(loginUser, optionalFromUser.get(), false);
             if (toUser.isEmpty())
                 throw new RequestFriendException();
             userFriendsRepository.deleteById(toUser.get().getId());

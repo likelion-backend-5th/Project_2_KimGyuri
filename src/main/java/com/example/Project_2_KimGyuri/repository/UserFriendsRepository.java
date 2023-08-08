@@ -10,6 +10,6 @@ import java.util.Optional;
 
 public interface UserFriendsRepository extends JpaRepository<UserFriendsEntity, Long> {
     List<UserFriendsEntity> findAllByToUserIsAndAcceptedEquals(UserEntity user, boolean accepted);
-    Optional<UserFriendsEntity> findByToUserIsAndAcceptedEquals(UserEntity user, boolean accepted);
     Optional<UserFriendsEntity> findByToUserIsAndFromUserIs(UserEntity toUser, UserEntity fromUser);
+    Optional<UserFriendsEntity> findByToUserIsAndFromUserIsAndAcceptedEquals(UserEntity toUser, UserEntity fromUser, boolean accepted);
 }
