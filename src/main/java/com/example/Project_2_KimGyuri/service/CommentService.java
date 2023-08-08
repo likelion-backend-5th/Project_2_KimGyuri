@@ -83,7 +83,7 @@ public class CommentService {
             throw new ArticleNotFoundException();
 
         if(comment.getUsersId().getId().equals(user.getId())) {
-            if(comment.getDeletedAt() != null) {
+            if(comment.getDeletedAt() != null || !comment.getArticle().getId().equals(articleId)) {
                 throw new CommentNotFoundException();
             }
             comment.setContent(dto.getContent());
@@ -109,7 +109,7 @@ public class CommentService {
             throw new ArticleNotFoundException();
 
         if(comment.getUsersId().getId().equals(user.getId())) {
-            if (comment.getDeletedAt() != null) {
+            if (comment.getDeletedAt() != null || !comment.getArticle().getId().equals(articleId)) {
                 throw new CommentNotFoundException();
             }
             comment.setDeletedAt(new Date());
