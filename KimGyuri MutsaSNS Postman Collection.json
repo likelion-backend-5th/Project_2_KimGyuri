@@ -1,0 +1,689 @@
+{
+	"info": {
+		"_postman_id": "cdab01f4-32fd-4d89-b028-bb23be9a0714",
+		"name": "KimGyuri MutsaSNS Postman Collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "28055519"
+	},
+	"item": [
+		{
+			"name": "[회원가입] POST /signup",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/signup?username=person&password=a&password-check=a&email=&phone=",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"signup"
+					],
+					"query": [
+						{
+							"key": "username",
+							"value": "person"
+						},
+						{
+							"key": "password",
+							"value": "a"
+						},
+						{
+							"key": "password-check",
+							"value": "a"
+						},
+						{
+							"key": "email",
+							"value": ""
+						},
+						{
+							"key": "phone",
+							"value": ""
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[로그인] POST /login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"person\",\r\n    \"password\": \"a\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[프로필 이미지 업로드] PUT /profileImg",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJwZXJzb24iLCJpYXQiOjE2OTE0NTcxODUsImV4cCI6MTY5MTQ2MDc4NX0.EkvkowJMraplhE_De2r1OY4bxDCb1PEoBqo_ozBY4638aV0tvCz-e_mfxc_xIbXHR_zgLZqvECZW-l2SlsjDqw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "profileImg",
+							"type": "file",
+							"src": "/C:/Users/Pc/Pictures/dog.jpg"
+						},
+						{
+							"key": "",
+							"type": "file",
+							"src": [],
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/profileImg",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"profileImg"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[피드 등록] POST /feed/create",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJwZXJzb24iLCJpYXQiOjE2OTE0NjIxMTIsImV4cCI6MTY5MTQ2NTcxMn0.rMhYUIygi47lbIuaT_sAH2JGclWTmcv3INsngiABp0lGwsWhnh9mT71b7onp7qHpr0N7qWjvyUr5MSXRcJ52iw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "title",
+							"value": "안",
+							"type": "text"
+						},
+						{
+							"key": "content",
+							"value": "녕",
+							"type": "text"
+						},
+						{
+							"key": "images",
+							"type": "file",
+							"src": [
+								"/C:/Users/Pc/Pictures/cat.jpg",
+								"/C:/Users/Pc/Pictures/cat1.jpg",
+								"/C:/Users/Pc/Pictures/cat2.jpg"
+							]
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/feed/create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"feed",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[사용자 피드 조회] GET /feed/{username}",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/feed/person",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"feed",
+						"person"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[피드 단독 조회] GET /feed/read/{articleId}",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJwZXJzb24yIiwiaWF0IjoxNjkxNDU3MjYyLCJleHAiOjE2OTE0NjA4NjJ9.LoO5_lBjCSrweJ9VkYt8XeOkn5P0ZfeoUoa2UVCsUFyuoYRHqehXgDO_fKMfl0KGLFJK-5ei9GK1gHBZqccxLA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/feed/read/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"feed",
+						"read",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[피드 수정] PUT /feed/{articleId}",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJwZXJzb24iLCJpYXQiOjE2OTE0NTcxODUsImV4cCI6MTY5MTQ2MDc4NX0.EkvkowJMraplhE_De2r1OY4bxDCb1PEoBqo_ozBY4638aV0tvCz-e_mfxc_xIbXHR_zgLZqvECZW-l2SlsjDqw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "title",
+							"value": "고양이2",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "content",
+							"value": "귀여워2",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "images",
+							"type": "file",
+							"src": [
+								"/C:/Users/Pc/Pictures/cat.jpg",
+								"/C:/Users/Pc/Pictures/cat1.jpg",
+								"/C:/Users/Pc/Pictures/cat2.jpg"
+							]
+						},
+						{
+							"key": "deleteImageId",
+							"value": "1, 2",
+							"type": "text",
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/feed/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"feed",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[피드 삭제] DELETE /feed/{articleId}",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJwZXJzb24iLCJpYXQiOjE2OTE0NTcxODUsImV4cCI6MTY5MTQ2MDc4NX0.EkvkowJMraplhE_De2r1OY4bxDCb1PEoBqo_ozBY4638aV0tvCz-e_mfxc_xIbXHR_zgLZqvECZW-l2SlsjDqw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/feed/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"feed",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[댓글 등록] POST /feed/{articleId}/comments",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJwZXJzb24iLCJpYXQiOjE2OTE0NjIxMTIsImV4cCI6MTY5MTQ2NTcxMn0.rMhYUIygi47lbIuaT_sAH2JGclWTmcv3INsngiABp0lGwsWhnh9mT71b7onp7qHpr0N7qWjvyUr5MSXRcJ52iw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"content\": \"고양이 귀엽네요\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/feed/1/comments",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"feed",
+						"1",
+						"comments"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[댓글 수정] PUT /feed/{articleId}/comments/{commentId}",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJwZXJzb24iLCJpYXQiOjE2OTE0NjIxMTIsImV4cCI6MTY5MTQ2NTcxMn0.rMhYUIygi47lbIuaT_sAH2JGclWTmcv3INsngiABp0lGwsWhnh9mT71b7onp7qHpr0N7qWjvyUr5MSXRcJ52iw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"content\": \"검은 고양이가 귀여워요\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/feed/1/comments/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"feed",
+						"1",
+						"comments",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[댓글 삭제] DELETE /feed/{articleId}/comments/{commentId}",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJwZXJzb24zIiwiaWF0IjoxNjkxNDU3Mjc0LCJleHAiOjE2OTE0NjA4NzR9.ifHN8Ny9xDYTgPsdPiGKrW762x9N6W6azSZEVEf0RxajpmjxgsFbq5c1Ihg19ixVDL6AMQ35jQwmWIS9Y2RZEA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/feed/1/comments/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"feed",
+						"1",
+						"comments",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[좋아요/좋아요취소] POST /feed/{articleId}/like",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMSIsImlhdCI6MTY5MTM3MzIzOCwiZXhwIjoxNjkxMzc2ODM4fQ.oTYM5IUeH9309tQlMQ0iHB3VMZsoLctyTMTJGtwyswR8yyvjVyYtTw8KP7XhaZTfuy2Pr4XOf3Hm907awZGlIw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/feed/1/like",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"feed",
+						"1",
+						"like"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[사용자 정보 조회] GET /user/{username}",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJwZXJzb24yIiwiaWF0IjoxNjkxNDU1MDQ0LCJleHAiOjE2OTE0NTg2NDR9.KaXOHX_xmyrMq3VopLga_wPE89x_cmt7HCQAQRK0cs9hEQJCj1aQcZmTca6mb7dxbVpNqXE9rgEIuvStEcScuQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/user/person",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"user",
+						"person"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[팔로우/팔로우해제] POST /user/{username}/follow",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJwZXJzb24zIiwiaWF0IjoxNjkxNDU3Mjc0LCJleHAiOjE2OTE0NjA4NzR9.ifHN8Ny9xDYTgPsdPiGKrW762x9N6W6azSZEVEf0RxajpmjxgsFbq5c1Ihg19ixVDL6AMQ35jQwmWIS9Y2RZEA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/user/person/follow",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"user",
+						"person",
+						"follow"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[친구 요청] POST /user/{username}/add",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJwZXJzb240IiwiaWF0IjoxNjkxNDYwOTkzLCJleHAiOjE2OTE0NjQ1OTN9.0YgxgigVafHGpAZFcpmM1IPeRJdI_57qeKyGFgrEDN6gbtCBHYdv4hnkxizVLMXd7boZyUs_ZouHplGLizrI7Q",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/user/person/add",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"user",
+						"person",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[친구 요청 목록 조회]GET /user/{username}/request",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJwZXJzb24iLCJpYXQiOjE2OTE0NjEwMjEsImV4cCI6MTY5MTQ2NDYyMX0.7LP6Q78fcSUTmnS7eP8z0ciaJNqCNnOtE3j8lCkDuVxUlmIYym-ZxVULLifBqJB1MjOZRE3-fYDZrpUp93cVbA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/user/person/request",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"user",
+						"person",
+						"request"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[친구 요청 수락/거절]PUT /user/{username}/request/{fromUsername}",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJwZXJzb24iLCJpYXQiOjE2OTE0NjEwMjEsImV4cCI6MTY5MTQ2NDYyMX0.7LP6Q78fcSUTmnS7eP8z0ciaJNqCNnOtE3j8lCkDuVxUlmIYym-ZxVULLifBqJB1MjOZRE3-fYDZrpUp93cVbA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"accepted\": true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/user/person/request/person4",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"user",
+						"person",
+						"request",
+						"person4"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[팔로잉 피드 조회]GET /feed/following",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJwZXJzb24zIiwiaWF0IjoxNjkxNDU3Mjc0LCJleHAiOjE2OTE0NjA4NzR9.ifHN8Ny9xDYTgPsdPiGKrW762x9N6W6azSZEVEf0RxajpmjxgsFbq5c1Ihg19ixVDL6AMQ35jQwmWIS9Y2RZEA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/feed/following",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"feed",
+						"following"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[친구 피드 조회]GET /feed/friends",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJwZXJzb24iLCJpYXQiOjE2OTE0NjEwMjEsImV4cCI6MTY5MTQ2NDYyMX0.7LP6Q78fcSUTmnS7eP8z0ciaJNqCNnOtE3j8lCkDuVxUlmIYym-ZxVULLifBqJB1MjOZRE3-fYDZrpUp93cVbA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/feed/friends",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"feed",
+						"friends"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
