@@ -196,9 +196,13 @@ public class FeedService {
             throw new ArticleNotFoundException();
         ArticleEntity article = optionalArticle.get();
         if (article.getUsersId().getId().equals(user.getId())) {
+            if (article.getDeletedAt() != null) {
+                throw new ArticleNotFoundException();
+            }
             article.setDeletedAt(new Date());
             articleRepository.save(article);
-        }
+        } else
+            throw new AuthorizationException();
     }
 
     //팔로잉 피드 조회
